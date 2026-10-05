@@ -1,0 +1,30 @@
+services:
+  web:
+    build: .
+    ports:
+      - "5000:80"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    env_file:
+      - ./.env
+    secrets:
+      - db_password_file
+  db:
+    image: postgres:17
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db_password_file
+      - POSTGRES_DB=taxapp
+      - POSTGRES_USER=flaskapp
+    secrets:
+      - db_password_file
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+secrets:
+  db_password_file:
+    file: ./secrets/db_password_file
+volumes:
+  postgres_data:
